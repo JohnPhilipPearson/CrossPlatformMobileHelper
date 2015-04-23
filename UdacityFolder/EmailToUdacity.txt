@@ -1,0 +1,34 @@
+Name:
+John Pearson
+
+E-mail address:
+pdjpearson@hotmail.com
+
+Github:
+https://github.com/JohnPhilipPearson/CrossPlatformMobileHelper.git
+
+You will find a "UdacityFolder" that will have a copy of this email "EmailToUdacity.txt"
+"20150422JohnPearsonAndroidFundamentalsProjectSelfEvaluation.docx"
+"20150422JohnPearsonAndroidFundamentalsProjectSelfEvaluation.pdf"
+"20150422VisualMocks.pdf"
+"CrossPlatformMobileHelperAppRelease.apk"
+
+Resources used:
+blogspot.com
+stackoverflow.com
+android.com
+worldbestlearning.com
+udacity.com
+intertech.com
+tutsplus.com
+edumobile.com
+vogella.com
+bigresource.com
+
+Statement:
+“I hereby confirm that this submission is my work. I have cited above the origins of any parts of the submission that were taken from Websites, books, forums, blog posts, GitHub repositories, etc. By including this in my email, I understand that I will be expected to explain my work in a video call with a Udacity coach before I can receive my verified certificate.”
+
+
+Thank you,
+John Pearson
+
