@@ -1,12 +1,15 @@
 package com.betweenyounme.crossplatformmobilehelper;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity implements GroupFragment.Callback
@@ -28,8 +31,6 @@ public class MainActivity extends ActionBarActivity implements GroupFragment.Cal
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.item_detail_container, new ItemFragment(), ITEMFRAGMENT_TAG)
                         .commit();
-
-                //getApplicationContext();
             }
 
         }
@@ -38,15 +39,6 @@ public class MainActivity extends ActionBarActivity implements GroupFragment.Cal
             mTwoPane = false;
             getSupportActionBar().setElevation(0f);
         }
-
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new GroupFragment())
-//                    .commit();
-//
-//            //getApplicationContext();
-//        }
-
     }
 
 
@@ -78,49 +70,34 @@ public class MainActivity extends ActionBarActivity implements GroupFragment.Cal
     }
     private Intent createShareIntent()
     {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        String jsonString = "";
-        try
-        {
-            jsonString = SampleData.AssetJSONFile(SampleData.JSON_FILENAME, this);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+
+        ArrayList<String> filenames = new ArrayList<String>();
+        filenames.add(SampleData.JSON_FILENAME);
+        filenames.add(SampleData.BETWEENYONME_FILENAME);
+        ArrayList<Uri> urisToShare = new ArrayList<Uri>();
+        try {
+            urisToShare = SampleData.AssetsImageAndJSONFile(filenames, this);
         }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
+        catch (Exception e) {
+            e.printStackTrace();
         }
-//        File file = null;
-//        try
-//        {
-//            file = new File(this.getCacheDir(), SampleData.JSON_FILENAME);
-//            FileOutputStream outputStream = new FileOutputStream(file);
-//            byte [] bytes = jsonString.getBytes();
-//            outputStream.write(bytes);
-//            outputStream.close();
-//        }
-//        catch (Exception ex)
-//        {
-//            ex.printStackTrace();
-//        }
-//
-//        Uri uri = Uri.fromFile(file);
-        //shareIntent.putExtra(Intent.EXTRA_STREAM, uri.toString());
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "share json file");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, jsonString);
+
+
+
+        shareIntent.setType("*/*");
+        shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisToShare);
+
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share files");
         return shareIntent;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
+
 
         return super.onOptionsItemSelected(item);
     }

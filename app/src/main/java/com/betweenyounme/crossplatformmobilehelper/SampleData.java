@@ -6,13 +6,18 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -21,6 +26,7 @@ import java.util.Vector;
 public class SampleData
 {
     public final String LOG_TAG = SampleData.class.getSimpleName();
+    public static final String BETWEENYONME_FILENAME = "BetweenYouNMe.png";
     public static final String JSON_FILENAME = "SampleData.json";
     public static final String JSON_GROUPARRAY = "Groups";
     public static final String JSON_ITEMARRAY = "Items";
@@ -30,6 +36,32 @@ public class SampleData
     public static final String JSON_IMAGEPATH = "ImagePath";
     public static final String JSON_SUMMARY = "Summary";
     public static final String JSON_CONTENT = "Content";
+
+    public static ArrayList<Uri> AssetsImageAndJSONFile (ArrayList<String> filenames, Context context) throws IOException
+    {
+        ArrayList<Uri> returnUrisToShare = new ArrayList<Uri>();
+        AssetManager manager = context.getAssets();
+        File filesDir = context.getFilesDir();
+        for(int i = 0; i < filenames.size(); i++)
+        {
+            String filename = filenames.get(i);
+            InputStream file = manager.open(filename);
+            byte[] formArray = new byte[file.available()];
+            file.read(formArray);
+            File tempFile = new File(filesDir.getPath() + "/" + filename);
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+            bufferedOutputStream.write(formArray);
+            bufferedOutputStream.flush();
+            bufferedOutputStream.close();
+            file.close();
+            returnUrisToShare.add(FileProvider.getUriForFile(context, "com.package.name.fileprovider",
+                    tempFile));
+            //returnUrisToShare.add(Uri.fromFile(tempFile));
+        }
+
+
+        return returnUrisToShare;
+    }
 
     public static String AssetJSONFile (String filename, Context context) throws IOException
     {
@@ -57,16 +89,9 @@ public class SampleData
                     null,
                     null
             );
-//            Cursor itemCursor = context.getContentResolver().query(
-//                    CrossPlatformMobileHelperContract.ItemEntry.CONTENT_URI,
-//                    null,
-//                    null,
-//                    null,
-//                    null
-//            );
+
             int groupCounter = groupCursor.getCount();
-//            int itemCounter = itemCursor.getCount();
-            if (groupCounter == 0)// && itemCounter == 0)
+            if (groupCounter == 0)
             {
                 loadDatabase = true;
             }
@@ -119,28 +144,15 @@ public class SampleData
                         cVVector.add(itemValues);
                     }
 
-                    //bulk to database
-                    int inserted = 0;
-                    // add to database
+
                     if (cVVector.size() > 0) {
                         ContentValues[] cvArray = new ContentValues[cVVector.size()];
                         cVVector.toArray(cvArray);
                         context.getContentResolver().bulkInsert(CrossPlatformMobileHelperContract.ItemEntry.CONTENT_URI, cvArray);
-/*
-longer term web service
-                    // delete old data so we don't build up an endless history
-                    context.getContentResolver().delete(CrossPlatformMobileHelperContract.WeatherEntry.CONTENT_URI,
-                            WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
-                            new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
-*/
-                        //notifyWeather();
+
                     }
 
-                    //Log.d(new SampleData()LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
-
                 }
-                //Log.d(new SampleData().LOG_TAG, "Group count=> " + totalGroups);
-                //Log.d(new SampleData().LOG_TAG, "Item count=> " + totalItems);
             }
 
         } catch (IOException e) {
@@ -195,22 +207,5 @@ longer term web service
         return groupid;
     }
     
-    /*
-    "Groups": [
-    {
-        "UniqueId": "Activity indicator",
-            "Title": "Activity indicator",
-            "Subtitle": "iOS and Windows 8  and Android",
-            "ImagePath": "Windows300x225All.png",
-            "Summary": "None",
-            "Items": [
-        {
-            "UniqueId": "ProgressRing",
-                "Title": "Windows 8.1",
-                "Subtitle": "ProgressRing",
-                "ImagePath": "WindowsOnly300x225.png",
-                "Summary": "ProgressRing",
-                "Content": "ProgressRing"
-        },
-        */
+
 }
